@@ -1,0 +1,236 @@
+!function($){(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-N27CXKS');var langArr=[];var browLang;var xhlEnterpriseId=_XHLF.a[0][0];var parentTempateId=_XHLF.a[0][1];var xhlFormId=_XHLF.a[0][2];var useCustomCSSStyle=_XHLF.a[0][3];var haveSubmitCallback=_XHLF.a[0][4];var useStyleSheet=_XHLF.a[0][5];var xhlFormRenderConfig=_XHLF.a[0][6]||{};var websiteLanguageParam='';var FormName='表单';var xhlFormSubmitFlag=true;var usableLength={};var formStyleObj={};var styleObj={};var xhl_countryArea_renderObj={};var xhl_allCountryList={};var xhl_ableSelectCountry=true;var xhl_excludeSelectCountryNodeList=[];if(xhlEnterpriseId+''==='10970'){xhl_excludeSelectCountryNodeList=['GB','US'];}
+var xhl_notUseFormLabelEnterpriseId=['11107'];var formHtmlContentStr={};var currFormContainerEl=undefined;(function(){try{websiteLanguageParam=_XHL?(_XHL.a[0][2]||''):''
+getConfigOrBrowserLanguageForForm(websiteLanguageParam)}catch(e){console.log(e)
+getConfigOrBrowserLanguageForForm('')}})();xhl_debounce=function(func,wait){var timeout;return function(){var context=this;var args=arguments;clearTimeout(timeout);timeout=setTimeout(function(){func.apply(context,args);},wait);};};FormMultipleIn=function(e){$(e).next().toggle();};myCheck=function(e){var oldValue=$(e).parent().parent().prev().val();console.log(oldValue);var valueArr=oldValue?oldValue.split(','):[];if(e.checked){valueArr.push(e.nextSibling.nodeValue);}else{for(var i=0;i<valueArr.length;i++){console.log(valueArr[i]);console.log(e.value);if(valueArr[i]===e.value){valueArr.splice(i,1);}}}
+$(e).parent().parent().prev().val(valueArr);};FormMultipleBlur_input=function(e){setTimeout(function(){if(e.contains(document.activeElement)){return;}
+if(e.nextSibling.contains(document.activeElement)){return;}
+$(e).next().hide();},0);};FormMultipleBlur_div=function(e){setTimeout(function(){if(e.contains(document.activeElement)){return;}
+if(e.previousSibling.contains(document.activeElement)){return;}
+$(e).hide();},0);};FormMultipleBlur_checkbox=function(e){setTimeout(function(){if(e.contains(document.activeElement)){return;}
+if(e.parentNode.parentNode.contains(document.activeElement)){return;}
+if(e.parentNode.parentNode.previousSibling.contains(document.activeElement)){return;}
+$(e).parent().parent().hide();},0);};XHLFormPopoverHideCheck=function(formEl,containerSelector,popoverSelector,hideCallback){setTimeout(function(){var e=formEl.querySelector(containerSelector);if(e&&e.contains(document.activeElement)){return;}
+if(hideCallback){$(e).find(popoverSelector).hide(hideCallback);}else{$(e).find(popoverSelector).hide();}},0);};XHLFormInputCheck=function(e){var name=$(e).attr('name');var maxLen=usableLength[name];if(!maxLen){return;}
+var haveTip=$(e).siblings('.xhl-error-tip').length>0;var tip=translateLanguage('最大字数限制 000 字');tip=tip.replace('000',maxLen);if(e.value.length>maxLen){if(!haveTip){$(e).after('<div class="xhl-error-tip" title="'+tip+'">'+tip+'</div>')}}else{if(haveTip){$(e).siblings('.xhl-error-tip').remove();}}};XHLFormCountryAreaFocus=function(e){var popoverEl=$(e).siblings('.xhl-countryArea-popper');if(popoverEl.is(':visible')){return;}
+popoverEl.show(function(){var inputVal=$(e).val();if(!inputVal){if(!(xhl_allCountryList.countrys&&xhl_allCountryList.countrys.length)){XHLFormCountryAreaGetCountries();}
+var formEl=$(e).closest('.xhl_form')[0];XHLFormCountryAreaTreeRender(xhl_allCountryList,formEl);}});};XHLFormCountryAreaBlur=function(e){var formEl=$(e).closest('.xhl_form')[0];XHLFormPopoverHideCheck(formEl,'.xhl-form-countryArea','.xhl-countryArea-popper',function(){var inputEl=$(formEl).find('.xhl-countryArea-input');if(inputEl.attr('readonly')!=='readonly'){inputEl.val('');}});};XHLFormCountryAreaChange=xhl_debounce(function(e){var name=$(e).val();var list_countryArea=XHLFormCountryAreaSearch(name);var formEl=$(e).closest('.xhl_form')[0];XHLFormCountryAreaTreeRender(list_countryArea,formEl);},500);XHLFormCountryAreaGetCountries=function(){$.ajax({url:window._XHLFROM.SERVERPORT+'/report/country/allcountry',type:'get',async:false,success:function(res){if(res.code==='1'){xhl_allCountryList=res.data;}}});};XHLFormCountryAreaSearch=function(val){if(val.slice()){var list_countryArea={};$.ajax({url:window._XHLFROM.SERVERPORT+'/report/country/wherelike',type:'post',async:false,data:{name:val.slice()},success:function(res){if(res.code==='1'){list_countryArea=res.data;}}});return list_countryArea;}else{return xhl_allCountryList;}};XHLFormCountryAreaTreeRender=function(val,formEl){$(formEl).find('.xhl-countryArea-popper').empty();var countryList=val.countrys||[];var divisionList=val.divisions||[];if(divisionList.length){$.each(divisionList,function(i,item){if(!countryList.filter(function(country){return country.code===item.countryCode}).length){countryList.push({code:item.countryCode,ename:item.countryEnname,name:item.countryName})}})}
+if(countryList.length){countryList.sort(function(a,b){var name_a=a.ename||'';var name_b=b.ename||'';return name_a.localeCompare(name_b);})}
+if(divisionList.length){divisionList.sort(function(a,b){var name_a=a.divisionEnname||'';var name_b=b.divisionEnname||'';return name_a.localeCompare(name_b);});}
+var result=$('<div class="xhl-countryArea-tree"></div>');$.each(countryList,function(i,item){var temp='<div class="xhl-countryArea-country xhl-countryArea-node" data-regionType="country" data-nodeLevel="1" data-code="'+item.code+'" data-name="'+item.ename+'">'+
+'<span class="xhl-countryArea-toggle-btn XHLFORMICON XHLFORMICON-arrow-opened" onclick="XHLFormCountryAreaTreeToggle(this)"></span>'+
+'<div class="xhl-countryArea-node-label" onclick="XHLFormCountryAreaNodeClick(this)">'+item.ename+'</div>'+
+'<div class="xhl-countryArea-division-group"></div>'+
+'</div>';result.append($(temp));});$.each(divisionList,function(i,item){var groupNode=result.find('.xhl-countryArea-country[data-code="'+item.countryCode+'"] > .xhl-countryArea-division-group');var toggleNode=groupNode.siblings('.xhl-countryArea-toggle-btn');var temp='<div class="xhl-countryArea-division xhl-countryArea-node" data-regionType="division" data-nodeLevel="2" data-code="'+item.countryCode+'-'+item.divisionCode+'" data-name="'+item.countryEnname+'-'+item.divisionEnname+'">'+
+((item.countryCode==='CN'||item.list)?'<span class="xhl-countryArea-toggle-btn XHLFORMICON XHLFORMICON-arrow-opened" onclick="XHLFormCountryAreaTreeToggle(this)"></span>':'')+
+'<div class="xhl-countryArea-node-label" onclick="XHLFormCountryAreaNodeClick(this)">'+item.divisionEnname+'</div>'+
+'<div class="xhl-countryArea-division-group"></div>'+
+'</div>';groupNode.append($(temp));toggleNode.addClass('xhl-countryArea-toggle-btn__active');if(item.list){$.each(item.list,function(i,childItem){var groupNode=result.find('.xhl-countryArea-division[data-code="'+item.countryCode+'-'+item.divisionCode+'"] > .xhl-countryArea-division-group');var toggleNode=groupNode.siblings('.xhl-countryArea-toggle-btn');var temp='<div class="xhl-countryArea-division xhl-countryArea-node" data-regionType="division" data-nodeLevel="3" data-code="'+item.countryCode+'-'+item.divisionCode+'-'+childItem.divisionCode+'" data-name="'+item.countryEnname+'-'+item.divisionEnname+'-'+childItem.divisionEnname+'">'+
+'<div class="xhl-countryArea-node-label" onclick="XHLFormCountryAreaNodeClick(this)">'+childItem.divisionEnname+'</div>'+
+'</div>';groupNode.append($(temp));toggleNode.addClass('xhl-countryArea-toggle-btn__active');});}});if(!countryList.length&&!divisionList.length){result='<div style="text-align: center;font-size: 14px;line-height: 24px;">No Data</div>'}
+$(formEl).find('.xhl-countryArea-popper').append(result);};XHLFormCountryAreaTreeToggle=function(e){if($(e).hasClass('xhl-countryArea-toggle-btn__active')){$(e).removeClass('xhl-countryArea-toggle-btn__active');$(e).siblings('.xhl-countryArea-division-group').hide();}else{$(e).addClass('xhl-countryArea-toggle-btn__active');var groupNode=$(e).siblings('.xhl-countryArea-division-group');if(groupNode.find('.xhl-countryArea-node').length){groupNode.show();return;}
+var countryAreaNode=$(e).parent();var parentCode=countryAreaNode.attr('data-code');var parentName=countryAreaNode.attr('data-name');var nodeLevel=countryAreaNode.attr('data-nodeLevel');var sendUrl='';var sendData={};if(parentCode==='CN'||/CN-/.test(parentCode)){var provinceId=countryAreaNode.attr('data-provinceId');sendUrl='/report/country/getChinaList';sendData={pId:provinceId||0};}else{sendUrl='/report/country/getByCountryCode';sendData={countryCode:parentCode};}
+var divisionList=[];$.ajax({url:window._XHLFROM.SERVERPORT+sendUrl,type:'post',async:false,data:sendData,success:function(res){if(res.code==='1'){$.each(res.data,function(i,item){var temp;if(sendUrl==='/report/country/getChinaList'){temp={divisionCode:item.code,divisionCnname:item.name,divisionEnname:item.pinyin,parentId:sendData.pId,provinceId:item.id};if(!item.parentId){if(!['32','33','34'].includes(item.id+'')){temp.hasChildren=true;}}}else{temp={divisionCode:item.divisionCode,divisionCnname:item.divisionCnname,divisionEnname:item.divisionEnname};}
+divisionList.push(temp);});}}});if(divisionList.length){divisionList.sort(function(a,b){var name_a=a.divisionEnname||'';var name_b=b.divisionEnname||'';return name_a.localeCompare(name_b);});}
+$.each(divisionList,function(i,item){var temp='<div class="xhl-countryArea-division xhl-countryArea-node" data-regionType="division" data-nodeLevel="'+(Number(nodeLevel)+1)+'" data-code="'+parentCode+'-'+item.divisionCode+'" data-name="'+parentName+'-'+item.divisionEnname+'" data-provinceId="'+item.provinceId+'">'+
+(item.hasChildren?'<span class="xhl-countryArea-toggle-btn XHLFORMICON XHLFORMICON-arrow-opened" onclick="XHLFormCountryAreaTreeToggle(this)"></span>':'')+
+'<div class="xhl-countryArea-node-label" onclick="XHLFormCountryAreaNodeClick(this)">'+item.divisionEnname+'</div>'+
+'<div class="xhl-countryArea-division-group"></div>'+
+'</div>';groupNode.append($(temp));});groupNode.show();}};XHLFormCountryAreaNodeClick=function(e){var formEl=$(e).closest('.xhl_form');if($(e).parent().attr('data-regiontype')==='country'){var countryAreaCode=$(e).parent().attr('data-code');var isExcludeCountry=xhl_excludeSelectCountryNodeList.includes(countryAreaCode);if((xhl_ableSelectCountry&&isExcludeCountry)||(!xhl_ableSelectCountry&&!isExcludeCountry)){var toggleEl=$(e).siblings('.xhl-countryArea-toggle-btn');if(toggleEl&&!toggleEl.hasClass('xhl-countryArea-toggle-btn__active')){toggleEl.click();}
+return;}}
+formEl.find('.xhl-countryArea-node__selected').removeClass('xhl-countryArea-node__selected');$(e).parent().addClass('xhl-countryArea-node__selected');var countryAreaName=$(e).parent().attr('data-name');var inputEl=formEl.find('.xhl-countryArea-input');inputEl.val(countryAreaName);inputEl.attr('readonly','readonly');formEl.find('.xhl-countryArea-triangle-btn').hide();formEl.find('.xhl-countryArea-clear-btn').show();formEl.find('.xhl-countryArea-popper').hide();};XHLFormCountryAreaNodeClear=function(e){var formEl=$(e).closest('.xhl_form');var inputEl=formEl.find('.xhl-countryArea-input');inputEl.val('');inputEl.removeAttr('readonly');inputEl.focus();formEl.find('.xhl-countryArea-node__selected').removeClass('xhl-countryArea-node__selected');formEl.find('.xhl-countryArea-clear-btn').hide();formEl.find('.xhl-countryArea-triangle-btn').show();};XHLFormCloseSuccessBox=function(e){$(e).closest('.xhl-form-successBox').css('display','none');}
+function getConfigOrBrowserLanguageForForm(websiteLanguageParam){if(typeof xhlFormId==='object'){xhlFormId=xhlFormId}else{const tempArr=[]
+tempArr.push(xhlFormId)
+xhlFormId=tempArr}
+browLang=(navigator.language||navigator.browserLanguage).toLowerCase();console.log(browLang)
+if(browLang.indexOf('cn')>-1){browLang='zh_cn';}
+if(browLang.indexOf('en')>-1){browLang='en';}
+if(browLang.indexOf('ru')>-1){browLang='ru';}
+if(browLang.indexOf('tw')>-1){browLang='zh-tw';}
+if(browLang.indexOf('fr')>-1){browLang='fr';}
+if(browLang==='zh'||browLang==='zh-sg'||browLang==='zh-hk'){browLang='zh_cn';}
+console.log(browLang)
+$.ajax({url:window._XHLFROM.SERVERPORT+"/cuss-login/translate/getConfigOrBrowserLanguageForForm",type:"post",dataType:"json",contentType:"application/json;charset=utf-8",data:JSON.stringify({orgId:xhlEnterpriseId,websiteLanguageParam:websiteLanguageParam,browserLangageParam:browLang,templateId:xhlFormId}),success:function(ret){if(ret.code==='1'){var data=ret.data;langArr=langArr.concat(data.languagePack);if(websiteLanguageParam&&ret.message==='埋点配置了语言参数，直接返回'){browLang=websiteLanguageParam
+getFormFields();}else{if(data.language===1){browLang=data.list[0];getFormFields();}else if(data.language===0){console.log('browLang',browLang)
+var langList=data.list;if(langList.indexOf(browLang)===-1){browLang='en';}
+getFormFields();}else if(data.language===2){browLang=(navigator.language||navigator.browserLanguage).toLowerCase()
+if(browLang.indexOf('cn')>-1){browLang='zh_cn';}
+if(browLang.indexOf('en')>-1){browLang='en';}
+if(browLang.indexOf('ru')>-1){browLang='ru';}
+if(browLang.indexOf('tw')>-1){browLang='zh-tw';}
+if(browLang.indexOf('fr')>-1){browLang='fr';}
+var langList=data.list;if(langList.indexOf(browLang)===-1){browLang='en';}
+if(browLang==="zh_cn"){getFormFields();}else{getLanguagePack(1);}}}}}})}
+function getLanguagePack(index){$.ajax({url:window._XHLFROM.SERVERPORT+"/cuss-login/translate/getList",type:"post",dataType:"json",data:{orgId:xhlEnterpriseId,pageNo:index,pageSize:150,},success:function(ret){if(ret.code==1){langArr=langArr.concat(ret.data.list);if(index*150<ret.data.total){getLanguagePack(index+1);}else{getFormFields();}}}});}
+function getFormFields(){console.log(typeof xhlFormId);if(typeof xhlFormId==='object'){for(var i=0;i<xhlFormId.length;i++){(function(arg){var formId=xhlFormId[arg];if(xhlFormRenderConfig&&xhlFormRenderConfig[formId]){getFieldsById(formId);}else{if(document.getElementsByClassName("BURY_CODE_"+formId).length){getFieldsById(formId);}}})(i);}}else{getFieldsById(xhlFormId);}}
+function getFieldsById(ID){$.ajax({url:window._XHLFROM.SERVERPORT+"/form-cust/form/getColumnsShow",type:"get",dataType:"json",data:{parentTempateId:parentTempateId,templateId:ID},success:function(ret){if(ret.code==1){var dataList=ret.data;var showList=dataList.show;var adaptLang=true;FormName=(dataList.template&&dataList.template.cname)?dataList.template.cname:'表单';if(xhlFormRenderConfig&&xhlFormRenderConfig[ID]){xhl_render_custom_form(showList,adaptLang,ID,xhlFormRenderConfig[ID])}else{xhl_render_default_form(showList,adaptLang,ID)}
+getConfig(ID);getUsableLength(showList);}}});}
+function getConfig(ID){$.ajax({url:window._XHLFROM.SERVERPORT+"/form-cust/form/getTemplateConfig",type:"get",dataType:"json",data:{id:ID},success:function(ret){if(ret.code==1){var data=ret.data;formStyleObj=JSON.parse(data);styleObj=handleStyleObj(formStyleObj);var txtList=[getStyleStr('BUTTON.btn_txt',true,true),getStyleStr('SUCCESSTIP.msg.txt',true,true),getStyleStr('SUCCESSTIP.confirm.box.txt',true,true),getStyleStr('SUCCESSTIP.confirm.btn.txt',true,true)];var resultList=[];for(var i=0;i<txtList.length;i++){if(txtList[i]&&resultList.indexOf(txtList[i])===-1){resultList.push(txtList[i]);}}
+if(!resultList.length){renderFormCustomStyle(ID);saveInitFormStr(ID);return;}
+$.ajax({url:window._XHLFROM.SERVERPORT+"/cuss-login/translate/getConfigOrBrowserLanguageForList",type:"post",dataType:"json",contentType:"application/json;charset=utf-8",data:JSON.stringify({orgId:xhlEnterpriseId,websiteLanguageParam:websiteLanguageParam,browserLangageParam:browLang,textList:resultList}),success:function(ret){if(ret.code==='1'){var data=ret.data;langArr=langArr.concat(data.languagePack);}
+renderFormCustomStyle(ID);saveInitFormStr(ID);},error:function(err){console.error(err);console.error('获取表单样式中的文本多语言失败, 显示默认语言');renderFormCustomStyle(ID);saveInitFormStr(ID);}});}}})}
+function renderFormCustomStyle(ID){var targetId='.BURY_CODE_'+ID;if(xhlFormRenderConfig&&xhlFormRenderConfig[ID]){targetId='.from_'+ID;}
+var btn_txt=getStyleStr('BUTTON.btn_txt',true,true);var submitStr=translateLanguage(btn_txt);$(targetId).find(".xhl-submit").text(submitStr);if(getStyleStr('COUNTRYAREA.type',true,true)==='select'){if(xhl_countryArea_renderObj[ID]){var str=xhl_renderHtml_countryArea(xhl_countryArea_renderObj[ID]);$(targetId).find('.a1003').parent().parent().replaceWith($(str));}}
+var styleStr_xhl_successMsg=getStyleStr('SUCCESSTIP.msg.bg_c',null,true)+
+getStyleStr('SUCCESSTIP.msg.border_c',null,true)+
+getStyleStr('SUCCESSTIP.msg.font_c',null,true)+
+getStyleStr('font');var styleStr_xhl_successBox_box=getStyleStr('SUCCESSTIP.confirm.box.bg_c',null,true)+
+getStyleStr('SUCCESSTIP.confirm.box.border_c',null,true)+
+getStyleStr('font',null,true);var styleStr_xhl_successBox_text=getStyleStr('SUCCESSTIP.confirm.box.font_c',null,true)+
+getStyleStr('SUCCESSTIP.confirm.box.txt_align',null,true);var styleStr_xhl_successBox_btn=getStyleStr('SUCCESSTIP.confirm.btn.width',null,true)+
+getStyleStr('SUCCESSTIP.confirm.btn.height',null,null,'height: $valpx;line-height: $valpx;')+
+getStyleStr('SUCCESSTIP.confirm.btn.radius',null,true)+
+getStyleStr('SUCCESSTIP.confirm.btn.font_c',null,true)+
+getStyleStr('SUCCESSTIP.confirm.btn.border_c',null,true)+
+getStyleStr('SUCCESSTIP.confirm.btn.bg_c',null,true);var needClassOrgIds=['10612','10110'];if(useCustomCSSStyle==''){var column=formStyleObj.column;var styleStr_xhl_control_group='';if(column==1){styleStr_xhl_control_group='float:none;width:100%;';}else if(column==2){styleStr_xhl_control_group='float:left;width:50%;';}
+var styleStr_xhl_form=getStyleStr('form_w')+
+getStyleStr('font')+
+'margin:auto;padding:20px 0;position: relative;';var styleStr_xhl_control_label=getStyleStr('font_c')+
+getStyleStr('font');var styleStr_xhl_submit=getStyleStr('BUTTON.width')+
+getStyleStr('BUTTON.height',null,null,'height: $valpx !important;line-height: $valpx !important;')+
+getStyleStr('BUTTON.radius')+
+getStyleStr('BUTTON.border_c')+
+getStyleStr('BUTTON.border_c',null,null,'background-color: $val !important;')+
+getStyleStr('BUTTON.font_c')+
+'overflow: hidden;text-overflow: ellipsis;white-space:nowrap;margin: auto;';var styleStr_xhl_selectMultiple_div=getStyleStr('INPUT.width')+
+getStyleStr('INPUT.height',null,null,'line-height: $valpx !important;')+
+getStyleStr('border_c')+
+getStyleStr('INPUT.radius');var styleStr_xhl_input_xlarge=getStyleStr('INPUT.width')+
+getStyleStr('INPUT.height',null,null,'height: $valpx !important;line-height: $valpx !important;')+
+getStyleStr('border_c')+
+getStyleStr('INPUT.radius')+
+getStyleStr('font');var styleStr_xhl_select=getStyleStr('SELECT.width')+
+getStyleStr('SELECT.height',null,null,'height: $valpx !important;line-height: $valpx !important;')+
+getStyleStr('border_c')+
+getStyleStr('SELECT.radius');var styleStr_xhl_textarea=getStyleStr('border_c')+
+getStyleStr('TEXTAREA.width')+
+getStyleStr('TEXTAREA.radius')+
+getStyleStr('TEXTAREA.height');if(needClassOrgIds.includes(xhlEnterpriseId)||useStyleSheet){var styleStr='';if(column==1){styleStr+=targetId+" .xhl-control-group"+"{float:none;width:100%;}";}else if(column==2){}
+if($(targetId).hasClass('xhl_form')){styleStr+=targetId+'.xhl_form {'+styleStr_xhl_form+' }';}else{styleStr+=targetId+' .xhl_form {'+styleStr_xhl_form+' }';}
+styleStr+=targetId+" .xhl-control-group {"+styleStr_xhl_control_group+' }';styleStr+=targetId+' .xhl-control-label {'+styleStr_xhl_control_label+' }';styleStr+=targetId+' .xhl-submit {'+styleStr_xhl_submit+' }';styleStr+=targetId+' .xhl-selectMultiple-div {'+styleStr_xhl_selectMultiple_div+' }';styleStr+=targetId+' .xhl-input-xlarge {'+styleStr_xhl_input_xlarge+' }';styleStr+=targetId+' .xhl-select {'+styleStr_xhl_select+' }';styleStr+=targetId+' .xhl-textarea {'+styleStr_xhl_textarea+' }';styleStr+=targetId+' .xhl-form-successMsg {'+styleStr_xhl_successMsg+' }';styleStr+=targetId+' .xhl-form-successBox-box {'+styleStr_xhl_successBox_box+' }';styleStr+=targetId+' .xhl-form-successBox-text {'+styleStr_xhl_successBox_text+' }';styleStr+=targetId+' .xhl-form-successBox-btn {'+styleStr_xhl_successBox_btn+' }';insertXHLStyle(styleStr);return;}
+if($(targetId).hasClass('xhl_form')){$(targetId).attr("style",styleStr_xhl_form);}else{$(targetId).find(".xhl_form").attr("style",styleStr_xhl_form);}
+$(targetId).find(".xhl-control-group").attr("style",styleStr_xhl_control_group);$(targetId).find(".xhl-control-label").attr("style",styleStr_xhl_control_label);$(targetId).find(".xhl-submit").attr("style",styleStr_xhl_submit);$(targetId).find(".xhl-selectMultiple-div").attr("style",styleStr_xhl_selectMultiple_div);$(targetId).find(".xhl-input-xlarge").attr("style",styleStr_xhl_input_xlarge);$(targetId).find(".xhl-select").attr("style",styleStr_xhl_select);$(targetId).find(".xhl-textarea").attr("style",styleStr_xhl_textarea);$(targetId).find(".xhl-form-successMsg").attr("style",styleStr_xhl_successMsg);$(targetId).find(".xhl-form-successBox-box").attr("style",styleStr_xhl_successBox_box);$(targetId).find(".xhl-form-successBox-text").attr("style",styleStr_xhl_successBox_text);$(targetId).find(".xhl-form-successBox-btn").attr("style",styleStr_xhl_successBox_btn);}else{if(needClassOrgIds.includes(xhlEnterpriseId)||useStyleSheet){var styleStr='';styleStr+=targetId+' .xhl-form-successMsg {'+styleStr_xhl_successMsg+' }';styleStr+=targetId+' .xhl-form-successBox-box {'+styleStr_xhl_successBox_box+' }';styleStr+=targetId+' .xhl-form-successBox-text {'+styleStr_xhl_successBox_text+' }';styleStr+=targetId+' .xhl-form-successBox-btn {'+styleStr_xhl_successBox_btn+' }';insertXHLStyle(styleStr);return;}
+$(targetId).find(".xhl-form-successMsg").attr("style",styleStr_xhl_successMsg);$(targetId).find(".xhl-form-successBox-box").attr("style",styleStr_xhl_successBox_box);$(targetId).find(".xhl-form-successBox-text").attr("style",styleStr_xhl_successBox_text);$(targetId).find(".xhl-form-successBox-btn").attr("style",styleStr_xhl_successBox_btn);}}
+function saveInitFormStr(ID){if(xhlFormRenderConfig&&xhlFormRenderConfig[ID]){for(var selector in xhlFormRenderConfig[ID]){formHtmlContentStr[selector]=$(selector).html();}}else{formHtmlContentStr[ID]=$('.BURY_CODE_'+ID).html();}}
+function handleStyleObj(styleObj){function handleConvert(key,val){if(!(val+"").length){return '';}
+var result='';switch(key){case 'width':case 'form_w':result='width: '+val+'px';break;case 'height':result='height: '+val+'px';break;case 'radius':result='border-radius: '+val+'px';break;case 'font_c':result='color: '+val;break;case 'border_c':result='border: 1px solid '+val;break;case 'bg_c':result='background-color: '+val;break;case 'font':result='font-family: '+val;break;case 'txt_align':result='text-align: '+val;break;default:result=val;}
+return result;}
+function handleRecursively(obj){var result={};for(var key in obj){var val=obj[key];if(val instanceof Object){result[key]=handleRecursively(val);}else{result[key]=handleConvert(key,val);}}
+return result;}
+return handleRecursively(styleObj);}
+function getStyleStr(key,noSemi,noForce,template){var keyPath=key.split('.');var result=styleObj;if(template){result=formStyleObj;}
+for(var i=0;i<keyPath.length;i++){result=result[keyPath[i]];if(!result){return ''}}
+if(typeof result==='string'||typeof result==='number'){if(template){return template.replace(/\$val/g,result)}
+return result+(noForce?'':' !important')+(noSemi?'':';');}else{return '';}}
+function insertXHLStyle(styleStr){if(document.all){window.XHLStyle=styleStr;document.createStyleSheet("javascript:XHLStyle");}else{var styleNode=document.createElement('style');styleNode.type='text/css';var styleTextNode=document.createTextNode(styleStr);styleNode.appendChild(styleTextNode);document.getElementsByTagName('HEAD').item(0).appendChild(styleNode);}}
+function getUsableLength(fieldList){$.ajax({url:window._XHLFROM.SERVERPORT+"/new-privilege/formFieldConfig/getListForClient",type:"get",dataType:"json",data:{serviceFlag:'save_form',orgId:xhlEnterpriseId},success:function(ret){if(ret.code==1){var data=ret.data;usableLength={};for(var i in data){var temp=data[i].typeLength;if(temp&&fieldList[i]){var typeLength=JSON.parse(temp);if(fieldList[i].type==='input'||fieldList[i].type==='text'){temp=typeLength.text;}else if(fieldList[i].type==='textarea'){temp=typeLength.textarea;}}else{temp=data[i].usableLength}
+usableLength[i]=temp;}}}})}
+function renderHtml(index,item,flag,adaptLang,formID){var labelId='xhl0'+flag;var tagName=(item.type).toUpperCase();var name=item.name;var isNeed=item.isNeed;if(adaptLang&&browLang!="zh_cn"){name=translateLanguage(name);}
+var temp=" ";var tempClass="";if(isNeed==1){temp='<span class="xhl-form-tip">*</span>';tempClass=" choose";}
+var options=item.option;var holderStr='';if(!item.colDefaultValue){var arr=['10207','10222','10227','10249','10281','10275','10286','10289','10299','10311','10308','10341'];if(arr.indexOf(xhlEnterpriseId)>-1){holderStr=name;}}else{holderStr=translateLanguage(item.colDefaultValue);}
+if(index==='a1003'){xhl_countryArea_renderObj[formID]={labelId:labelId,name:name,holderStr:holderStr,index:index,temp:temp,tempClass:tempClass};}
+var str="";switch(tagName){case("TEXT"):case("INPUT"):str='<div class="usedComp xhl-control-group xhl-form-input component" data-type="text" rel="popover" >'+
+'<label class="xhl-control-label inpt" id="'+labelId+'" data-valtype="label">'+name+'</label>'+
+'<div class="xhl-controls"><input onchange="XHLFormInputCheck(this)" oninput="XHLFormInputCheck(this)" type="text" placeholder="'+holderStr+'" name="'+index+'" class="xhl-input-xlarge xhl-valtype '+index+tempClass+'" >'+temp+
+'</div></div>';break;case("TEXTAREA"):if(xhlEnterpriseId==='10312'){holderStr='Give us your detailed requirements for a better quotation.'}
+str='<div class="usedComp xhl-control-group xhl-form-text component" rel="popover" >'+
+'<label class="xhl-control-label txt" id="'+labelId+'" data-valtype="label">'+name+'</label>'+
+'<div class="xhl-controls"><textarea onchange="XHLFormInputCheck(this)" oninput="XHLFormInputCheck(this)" type="" placeholder="'+holderStr+'" class="xhl-textarea xhl-valtype '+index+tempClass+'" name="'+index+'"/></textarea>'+temp+'</div></div>';break;case("SELECT"):var arr;var flag=0;var tempHolderStr='';if(options.indexOf('?')>-1){arr=options.split("?");tempHolderStr='请选择';}else{arr=options.split(",");tempHolderStr='Please choose ';flag=1;}
+if(browLang!="zh_cn"){tempHolderStr=translateLanguage('请选择');}
+var optStr='<option value="" disabled selected style="display:none;">'+tempHolderStr+name+'</option>';if(item.colDefaultValue){tempHolderStr=translateLanguage(item.colDefaultValue);optStr='<option value="" disabled selected style="display:none;">'+tempHolderStr+'</option>';}
+$.each(arr,function(i,item){if(i>=flag){if(browLang!="zh_cn"){item=translateLanguage(item);optStr+='<option value="'+item+'">'+item+'</option>';}else{optStr+='<option value="'+item+'">'+item+'</option>';}}})
+str='<div class="usedComp xhl-control-group xhl-form-select component" data-type="text" rel="popover" >'+
+'<label class="xhl-control-label sel" id="'+labelId+'" data-valtype="label">'+name+'</label>'+
+'<div class="xhl-controls"><select required class="xhl-select xhl-valtype '+index+tempClass+'" data-valtype="option" name="'+index+'">'+optStr+'</select>'+temp+'</div></div>';break;case("SELECTMULTIPLE"):var tempOptStr='';var arrTemp=options.split('?');$.each(arrTemp,function(i,item){if(browLang!=="zh_cn"){item=translateLanguage(item);}
+tempOptStr+='<div class="xhl-form-selectMultiple-option xhl-form-selectMultiple-option-seq-'+i+'"><input type="checkbox" onclick="myCheck(this)" onblur="FormMultipleBlur_checkbox(this)" value="'+item+'">'+item+'</div>';});var multHtml='<div tabindex="0" onblur="FormMultipleBlur_div(this)" class="xhl-selectMultiple-div">'+tempOptStr+'</div>';str='<div class="usedComp xhl-control-group xhl-form-select component" data-type="text" rel="popover" >'+
+'<label class="xhl-control-label sel" id="'+labelId+'" data-valtype="label">'+name+'</label>'+
+'<div class="xhl-controls"><div class="xhl-form-selectMultiple-container"><div class="triangle-down xhl-form-selectMultiple-triangle-btn XHLFORMICON XHLFORMICON-arrow-opened"></div>'+
+'<input type="text" placeholder="'+holderStr+'" name="'+index+'" onclick="FormMultipleIn(this)" onblur="FormMultipleBlur_input(this)" readonly class="xhl-form-selectMultiple-input xhl-input-xlarge xhl-valtype '+index+tempClass+'">'+
+multHtml+temp+
+'</div></div></div>';break;}
+return str;}
+function xhl_renderHtml_countryArea(renderObj){var labelId=renderObj.labelId;var name=renderObj.name;var holderStr=renderObj.holderStr;var index=renderObj.index;var temp=renderObj.temp;var tempClass=renderObj.tempClass;return '<div class="usedComp xhl-control-group xhl-form-countryArea component" data-type="text" rel="popover" >'+
+'<label class="xhl-control-label sel" id="'+labelId+'" data-valtype="label">'+name+'</label>'+
+'<div class="xhl-controls">'+
+'<div class="xhl-countryArea-container">'+
+'<input type="text" placeholder="'+holderStr+'" name="'+index+'" autocomplete="new-password" onfocus="XHLFormCountryAreaFocus(this)" onblur="XHLFormCountryAreaBlur(this)" oninput="XHLFormCountryAreaChange(this)" class="xhl-countryArea-input xhl-input-xlarge xhl-valtype '+index+tempClass+'" />'+
+'<span class="xhl-countryArea-triangle-btn XHLFORMICON XHLFORMICON-arrow-opened"></span>'+
+'<span tabindex="0" class="xhl-countryArea-clear-btn XHLFORMICON XHLFORMICON-delete" onclick="XHLFormCountryAreaNodeClear(this)"></span>'+
+'<div tabindex="0" onblur="XHLFormCountryAreaBlur(this)" class="xhl-countryArea-popper"></div>'+
+'</div>'+
+temp+
+'</div>'+
+'</div>';}
+function xhl_render_default_form(showList,adaptLang,ID){var fieldsStr='';var count=0;var id="'"+ID+"'";$.each(showList,function(i,item){fieldsStr+=renderHtml(i,item,count,adaptLang,ID);count++;});var htmlContentArr=['<form class="xhl_form from_'+ID+'" style="margin:auto;padding:20px 0;position: relative" >','</form>'];if(xhl_notUseFormLabelEnterpriseId.indexOf(xhlEnterpriseId+'')!==-1){htmlContentArr=['<div class="xhl_form from_'+ID+'" style="margin:auto;padding:20px 0;position: relative" >','</div>']}
+htmlContentArr.splice(1,0,'<fieldset style="border:none">'+fieldsStr+
+'<div class="xhl-footer" style="margin-bottom: 9px;clear: both">'+
+'<div id="xhlFormSubmit" class="xhl-submit ga_submit_bury_form" onclick="xhlFormSubmit('+id+', this)">'+translateLanguage('提交')+'</div></div>'+
+'</fieldset>'+
+'<div class="xhl-form-alert"></div>'+
+'<div class="xhl-form-successMsg"></div>'+
+'<div class="xhl-form-successBox"><div class="xhl-form-successBox-box"><p class="xhl-form-successBox-text"></p><div class="xhl-form-successBox-btn" onclick="XHLFormCloseSuccessBox(this)"></div></div></div>');$('.BURY_CODE_'+ID).html(htmlContentArr.join(''));}
+function xhl_render_custom_form(showList,adaptLang,ID,config){var fieldList=JSON.parse(JSON.stringify(showList));var typeList=['TEXT','INPUT','TEXTAREA','SELECT','SELECTMULTIPLE'];var specialList=['submit','else'];var count=0;var id="'"+ID+"'";var submitBtnAdded=false;var lastSelector='';var submitBtnStr='<div class="xhl-footer" style="margin-bottom: 9px;clear: both">'+
+'<div id="xhlFormSubmit" class="xhl-submit ga_submit_bury_form" onclick="xhlFormSubmit('+id+', this)">'+translateLanguage('提交')+'</div></div>';var submitTipStr='<div class="xhl-form-alert"></div>'+
+'<div class="xhl-form-successMsg"></div>'+
+'<div class="xhl-form-successBox"><div class="xhl-form-successBox-box"><p class="xhl-form-successBox-text"></p><div class="xhl-form-successBox-btn" onclick="XHLFormCloseSuccessBox(this)"></div></div></div>';for(var selector in(config||{})){lastSelector=selector;var renderList=config[selector];var fieldsStr='';var includeSubmit=false;$.each(renderList,function(index,key){if(!Object.keys(fieldList).length){return false;}
+if(typeList.indexOf(key.toUpperCase())!==-1){var fieldType=key.toUpperCase();$.each(fieldList,function(i,item){if(item.type.toUpperCase()===fieldType){fieldsStr+=renderHtml(i,item,count,adaptLang,ID);count++;delete fieldList[i];}});return true;}
+if(key.indexOf('a100')===0){if(fieldList[key]){fieldsStr+=renderHtml(key,fieldList[key],count,adaptLang,ID);count++;delete fieldList[key];}
+return true;}
+if(key==='submit'){includeSubmit=true;return true;}
+if(key==='else'){$.each(fieldList,function(i,item){fieldsStr+=renderHtml(i,item,count,adaptLang,ID);count++;delete fieldList[i];});return true;}});var htmlContentArr=['<form class="xhl_form from_'+ID+'" style="margin:auto;padding:20px 0;position: relative" >','</form>'];if(xhl_notUseFormLabelEnterpriseId.indexOf(xhlEnterpriseId+'')!==-1){htmlContentArr=['<div class="xhl_form from_'+ID+'" style="margin:auto;padding:20px 0;position: relative" >','</div>']}
+var tempStr='<fieldset style="border:none">'+fieldsStr;if(includeSubmit&&!submitBtnAdded){tempStr+=submitBtnStr;submitBtnAdded=true;}
+tempStr+='</fieldset>';tempStr+=submitTipStr;htmlContentArr.splice(1,0,tempStr);$(selector).html(htmlContentArr.join(''));}
+$.each(fieldList,function(i,item){fieldsStr+=renderHtml(i,item,count,adaptLang,ID);count++;delete fieldList[i];});if(!submitBtnAdded){var _fieldset=$(lastSelector).find('fieldset');_fieldset.append(submitBtnStr);}}
+function translateLanguage(targetText){var L=langArr.length;var flag=1;for(var i=0;i<L;i++){if(targetText==langArr[i].zh_cn){flag=0;var currLang=browLang.toLowerCase();var handleLang=currLang;if(handleLang.indexOf('-')>-1){handleLang=handleLang.split('-')[0];}
+var translateText=langArr[i][currLang]||langArr[i][handleLang]
+if(translateText){return translateText+' ';}else{return langArr[i].en;}
+break;}}
+if(flag==1){return targetText;}}
+xhlFormSubmit=function(id,clickBtnEl){if(clickBtnEl){if(xhlFormRenderConfig&&xhlFormRenderConfig[id]){currFormContainerEl=$(clickBtnEl).closest('.from_'+id).get(0);}else{currFormContainerEl=$(clickBtnEl).closest('.BURY_CODE_'+id).get(0);}}
+var visitorId=readCookie('_xhluvisitorid');if(visitorId){if(visitorId.indexOf(xhlEnterpriseId+'FK')>-1){xhlFormSubmitTemp(visitorId,id)}else{getTimestramp(id)}}
+else{getTimestramp(id)}}
+function getTimestramp(id){$.ajax({url:window._XHLFROM.hk_SERVERPORT+'/server/getDateTime',type:"GET",dataType:"json",async:false,success:function(ret){var num=Math.floor(Math.random()*90)+10;var visitId=[xhlEnterpriseId,'FK',ret,num].join('');setCookie("_xhluvisitorid",visitId);xhlFormSubmitTemp(visitId,id);},error:function(err){}})}
+function xhlFormSubmitTemp(visitorId,id){var firstVisitorAddress='';var countryCode='';var country='';$.ajax({url:window._XHLFROM.hk_SERVERPORT+"/server/enterpriseVisitor",type:"post",dataType:"json",data:{enterpriseId:xhlEnterpriseId,visitorId:visitorId,clientId:readCookie('ampClientId')},success:function(ret){console.log('ret= '+ret)
+if(ret.code&&ret.code==0){}else{firstVisitorAddress=ret.firstVisitorAddress;countryCode=ret.ipLocationCode;country=ret.ipLocation;}
+xhlFormVerifySubmit(firstVisitorAddress,countryCode,country,visitorId,id);},error:function(){xhlFormVerifySubmit(firstVisitorAddress,countryCode,country,visitorId,id);}})}
+function xhlFormVerifySubmit(firstVisitorAddress,countryCode,country,visitorId,id){var _formContainer=$(currFormContainerEl?currFormContainerEl:'.BURY_CODE_'+id);var _submitBtn=_formContainer.find('#xhlFormSubmit');var submitTxt=_submitBtn.text();var postData={orgId:xhlEnterpriseId,currentUrl:window.location.href,templateId:id,sourceUrl:firstVisitorAddress,source:2,proj:visitorId}
+var node=0;var str=translateLanguage('请选择');var str2=translateLanguage('不能为空');var str3=translateLanguage('提交成功');var str4=translateLanguage('提交失败');var str5=translateLanguage('邮箱格式不正确');var str6=translateLanguage('电话号码格式不正确');var str7=translateLanguage('请输入正确的WhatsApp信息');var error_phoneDigits=translateLanguage('电话号码至少为7位数字');var error_overLength=translateLanguage('请确保字段内容格式正确');var _formItemList=_formContainer.find('.xhl-control-group');if(xhlFormRenderConfig&&xhlFormRenderConfig[id]){var selectorList=[];for(var selector in xhlFormRenderConfig[id]){selectorList.push(selector);}
+if(selectorList.length){_formItemList=$(selectorList.join(',')).find('.xhl-control-group');}}
+_formItemList.each(function(){var _this=$(this).find('.xhl-valtype');var arg=_this.attr('name');var flag=_this.hasClass('choose');var val=_this.val();if(arg==='a1003'){if(_this.hasClass('xhl-countryArea-input')){if(_this.attr('readonly')==='readonly'){val=_this.val();}else{val='';}}else{val=_this.val();}}
+if(_this.is('select')){var tip1=$(this).find('.xhl-control-label').text();var selectTips=str+tip1;if(flag&&!val){node=1;_this.focus();prompt(selectTips,id,'xhl-alert-warning',_this.closest('.xhl_form')[0]);return false;}}else{if(flag){if(val==''){node=1;var tip=$(this).find('.xhl-control-label').text();_this.focus();prompt(tip+str2,id,'xhl-alert-warning',_this.closest('.xhl_form')[0]);return false;}}
+if(arg==='a10010'&&val!==''){if(!/\w+?@\S+?\.[A-Za-z\d]{2,4}/mg.test(val)){node=1;_this.focus();prompt(str5,id,'xhl-alert-warning',_this.closest('.xhl_form')[0]);return false;}}
+if(arg==='a10012'&&val!==''){var reg_phone=/^[ \\\-_`~!@#$%^&*()+=|{}':;",\[\].<>/?~！@#￥%……&*（）——+\d]+(( x| ext)[ \\\-_`~!@#$%^&*()+=|{}':;",\[\].<>/?~！@#￥%……&*（）——+\d]+)?$/i;if(!reg_phone.test(val)||!/\d/.test(val)){node=1;_this.focus();prompt(str6,id,'xhl-alert-warning',_this.closest('.xhl_form')[0]);return false;}}
+if(arg==='a10052'&&val!==''){if(!/^[ \-_`~!@#$%^&*()+=|{}':;',\[\].<>/?~！@#￥%……&*（）——+\d]+$/.test(val)){node=1;_this.focus();prompt(str7,id,'xhl-alert-warning',_this.closest('.xhl_form')[0]);return false;}}}
+if(node===0){if(val&&val.indexOf(str)>-1){val='';}
+postData[arg]=val;}});if(node===0){for(var i in usableLength){_submitBtn.parent().parent().find("[name='"+i+"']").each(function(){if(this&&this.oninput){XHLFormInputCheck(this)}});var val=postData[i];var count=usableLength[i];if(val&&count&&val.length>count){node=1;}}
+if(node===1){prompt(error_overLength,id,'xhl-alert-warning');}}
+if(node===0&&xhlFormSubmitFlag){xhlFormSubmitFlag=false;var LoadTip=translateLanguage('Loading');_submitBtn.text(LoadTip+'...');$.ajax({url:window._XHLFROM.SERVERPORT+"/form-cust/form/saveColumnValue",type:"post",dataType:"json",data:postData,success:function(ret){xhlFormSubmitFlag=true;_submitBtn.text(submitTxt)
+if(ret.code==1){if(_submitBtn[0]){_submitBtn[0].dispatchEvent(new CustomEvent('xhlFormSubmitSuccess',{bubbles:true,detail:{data:postData}}));}
+var formId=ret.data;if(formId){var productList;if(getCookie("withProduct")==="true"){try{productList=JSON.parse(getCookie("productList")||localStorage.getItem("productList"));}catch(e){}}
+var externalDataList;try{externalDataList=JSON.parse(sessionStorage.getItem("XHLFormExtraFieIds")||getCookie("XHLFormExtraFieIds"));}catch(e){}
+try{if(productList||externalDataList){var productData={formId:formId,orgId:xhlEnterpriseId}
+if(productList){productData.list=productList;}
+if(externalDataList){productData.formOptionsDtoList=externalDataList;}
+$.ajax({url:window._XHLFROM.SERVERPORT+"/form-cust/product/saveList",type:"post",contentType:"application/json;charset=utf-8",dataType:"json",data:JSON.stringify(productData),success:function(ret){if(ret.code==1){}}})}}catch(e){console.error('保存购物车数据/额外数据失败');}}
+var herf=window.location.href
+if(herf.indexOf('xinhaiepc')>-1){$('body').append('<img style="display: none" src="https://secure.adnxs.com/px?id=988546&order_id=[ORDER_ID]&t=2" width="1" height="1" />')}else if(herf.indexOf('xinhaimining')>-1){$('body').append('<img style="display: none" src="https://secure.adnxs.com/px?id=988540&order_id=[ORDER_ID]&t=2" width="1" height="1" />')}else if(herf.indexOf('xinhaimineral')>-1){$('body').append('<img style="display: none" src="https://secure.adnxs.com/px?id=988552&order_id=[ORDER_ID]&t=2" width="1" height="1" />')}
+if(formId){saveFormPiwikVisitRelation(xhlEnterpriseId,visitorId,formId,countryCode,country);sendNotice();}
+if(xhl_notUseFormLabelEnterpriseId.indexOf(xhlEnterpriseId+'')!==-1){if(xhlFormRenderConfig&&xhlFormRenderConfig[id]){for(var selector in xhlFormRenderConfig[id]){if(formHtmlContentStr[selector]){$(selector).html(formHtmlContentStr[selector]);if($(selector).find('#xhlFormSubmit')){currFormContainerEl=$(selector).find('.from_'+id).get(0);}}}}else{if(formHtmlContentStr[id]){_formContainer.html(formHtmlContentStr[id]);}}}else{if(xhlFormRenderConfig&&xhlFormRenderConfig[id]){for(var selector in xhlFormRenderConfig[id]){if(formHtmlContentStr[selector]){var _form=$(selector).find('.from_'+id);if(_form[0]){_form[0].reset();}}}}else{var _form=_formContainer.find('.from_'+id);if(_form[0]){_form[0].reset();}}}
+submitOverPrompt(str3,id,'xhl-alert-success',currFormContainerEl);if(haveSubmitCallback){try{formDownLoadPDF();}
+catch(err){console.log('function formDownLoadPDF is undefined');}}}else{prompt(str4,id,'xhl-alert-danger')}},error:function(err){console.log(err);_submitBtn.text(submitTxt);xhlFormSubmitFlag=true;}})}}
+function sendNotice(){console.log("FormName="+FormName)
+$.ajax({url:window._XHLFROM.WebsocketURL+"/websocketLeavemessage/sendEnterpriseLeavemessageMessage",type:"post",dataType:"json",data:{enterpriseId:xhlEnterpriseId,message:FormName},success:function(ret){}})}
+function subStr(str){if(str.indexOf('#')>-1){return str;}else{if(str.length>6){str=str.substring(0,6);}
+return "#"+str;}}
+function setVisitorId(enterpriseId){var date=new Date();date=new Date(Date.now()+(date.getTimezoneOffset()+480)*60*1000);var Y=date.getFullYear();var M=(date.getMonth()+1<10?"0"+(date.getMonth()+1):date.getMonth()+1);var D=(date.getDate()<10?"0"+(date.getDate()):date.getDate());var h=(date.getHours()<10?"0"+date.getHours():date.getHours());var m=(date.getMinutes()<10?"0"+date.getMinutes():date.getMinutes());var s=(date.getSeconds()<10?"0"+date.getSeconds():date.getSeconds());var millisecond=date.getMilliseconds();if(date.getMilliseconds()<10){millisecond="00"+date.getMilliseconds();}else if(date.getMilliseconds()<100){millisecond="0"+date.getMilliseconds();}
+var visitId=[enterpriseId,"FK",Y,M,D,h,m,s,millisecond].join("");return visitId;}
+function setCookie(name,value){var days=3000;var exp=new Date();exp.setTime(exp.getTime()+days*24*60*60*1000);document.cookie=name+"="+escape(value)+";expires="+exp.toGMTString()+";path=/;domain=test.leadscloud.com";}
+function getCookie(name){var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");if(arr=document.cookie.match(reg)){return decodeURIComponent(arr[2]);}else{return null;}}
+function xhlTrim(str){var result;result=str.replace(/(^\s+)|(\s+$)/g,"");result=result.replace(/\s/g,"").toLowerCase();return result;}
+function saveFormPiwikVisitRelation(orgId,proj,formId,countryCode,country){var jsonData={orgId:orgId,visitorId:proj,piwikVisitorId:window.piwikVisitorId||'',currentUrl:window.location.href,countryCode:countryCode,country:country,formId:formId}
+$.ajax({url:window._XHLFROM.hk_SERVERPORT+"/piwik/piwik/saveFormPiwikVisitRelation",type:'post',contentType:"application/json",dataType:'json',data:JSON.stringify(jsonData),success:function(){}})}
+function prompt(message,id,style,formContainer){var _formContainer=formContainer?$(formContainer):$(currFormContainerEl?currFormContainerEl:'.BURY_CODE_'+id);var _alertTip=_formContainer.find('.xhl-form-alert');_alertTip.stop(true,true).addClass(style).html(message).show();setTimeout(function(){_alertTip.attr("style","display:none");},1500);}
+function submitOverPrompt(message,id,style,formContainer){var noticeType=getStyleStr('SUCCESSTIP.type',true,true);if(!noticeType){prompt(message,id,style,formContainer);}
+if(noticeType==='confirm'){showSuccessBox(message,id,formContainer);}else{showSuccessMsg(message,id,formContainer);}}
+function showSuccessMsg(message,id,formContainer){var _formContainer=formContainer?$(formContainer):$(currFormContainerEl?currFormContainerEl:'.BURY_CODE_'+id);var _successMsg=_formContainer.find('.xhl-form-successMsg');var txt=translateLanguage(getStyleStr('SUCCESSTIP.msg.txt',true,true))||message;_successMsg.stop(true,true).text(txt).show();setTimeout(function(){_successMsg.hide();},3000);}
+function showSuccessBox(message,id,formContainer){var txt=translateLanguage(getStyleStr('SUCCESSTIP.confirm.box.txt',true,true))||message||'提交成功';var btnTxt=translateLanguage(getStyleStr('SUCCESSTIP.confirm.btn.txt',true,true))||translateLanguage('关闭')||'关闭';var _formContainer=formContainer?$(formContainer):$(currFormContainerEl?currFormContainerEl:'.BURY_CODE_'+id);_formContainer.find('.xhl-form-successBox-text').text(txt);_formContainer.find('.xhl-form-successBox-btn').text(btnTxt);_formContainer.find('.xhl-form-successBox').stop(true,true).css('display','flex').show();}
+function readCookie(name){var reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");var arr=document.cookie.match(reg);return arr?unescape(arr[2]):null;}}(_XHLJQ);
